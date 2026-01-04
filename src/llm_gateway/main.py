@@ -4,7 +4,7 @@ from .middleware.auth import ApiKeyAuthMiddleware
 from .middleware.request_id import RequestIDMiddleware
 from .routing.router import health_router
 from contextlib import asynccontextmanager
-import uvicorn
+
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
     # ===== startup =====
