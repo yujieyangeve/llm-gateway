@@ -1,4 +1,4 @@
 /pyproject.toml
 src/llm_gateway/__pycache__/
 src/llm_gateway/__pycache__/main.cpython-313.pyc
-
+*.pyc

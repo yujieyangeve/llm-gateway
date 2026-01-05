@@ -1,5 +1,6 @@
 from llm_gateway.config.settings import Settings
 from fastapi import FastAPI
+from .api.chat import router as chat_router
 from .middleware.auth import ApiKeyAuthMiddleware
 from .middleware.request_id import RequestIDMiddleware
 from .routing.router import health_router
@@ -21,6 +22,7 @@ async def _lifespan(app: FastAPI):
 def _register_routes(app: FastAPI):
     print("Registering routes...")
     app.include_router(health_router())
+    app.include_router(chat_router)
 
 def _register_middlewares(app: FastAPI, settings: Settings):
     print("Registering middlewares...")

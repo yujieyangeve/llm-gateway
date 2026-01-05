@@ -1,4 +1,4 @@
-from fastapi import FastAPI,APIRouter
+from fastapi import APIRouter
 
 
 
@@ -10,5 +10,3 @@ def health_router():
         return {"status": "healthy"}
 
     return router
-
-
