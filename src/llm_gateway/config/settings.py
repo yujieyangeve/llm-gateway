@@ -1,4 +1,7 @@
 from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Settings:
@@ -27,16 +30,18 @@ class ServerSettings:
 
 class openAISettings:
     def __init__(self):
-        self.api_key = getenv("API_KEY", "default_key")
+        self.api_key = getenv("OPENAI_API_KEY", "default-api-key")
         self.base_url = getenv("OPENAI_API_URL", "https://api.openai.com/v1")
+
         self.max_retries = int(getenv("OPENAI_MAX_RETRIES", "3"))
         self.enabled = getenv("OPENAI_ENABLED", "true").lower() == "true"
         self.model_name = getenv("OPENAI_MODEL_NAME", "gpt-4")
         self.temperature = float(getenv("OPENAI_TEMPERATURE", "0.7"))
         self.max_tokens = int(getenv("OPENAI_MAX_TOKENS", "2048"))
         self.top_p = float(getenv("OPENAI_TOP_P", "1.0"))
-      
-  
+        self.timeout_seconds = int(getenv("OPENAI_TIMEOUT_SECONDS", "30"))
+
+
 class ProvideSettings:
     def __init__(self):
         self.default_provider = getenv("DEFAULT_PROVIDER", "openai")

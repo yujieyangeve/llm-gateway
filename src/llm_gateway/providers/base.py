@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from llm_gateway.domain.chat_models import ChatRequest, ChatResponse
+from llm_gateway.domain.models import ChatRequest, ChatResponse
 
 class ChatProvider(ABC):
 

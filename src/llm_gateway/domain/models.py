@@ -15,7 +15,7 @@ class ChatRequest(BaseModel):
     max_tokens: Optional[int] = None
     top_p: Optional[float] = 1.0
     
-    timeout_ms: Optional[int] = 60000  # Timeout for the request in milliseconds
+    timeout_ms: Optional[int] = 60000 
     
     
 

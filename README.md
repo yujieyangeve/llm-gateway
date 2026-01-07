@@ -80,3 +80,13 @@ http://127.0.0.1:8001/docs
 - `POST /v1/chat`
 
 All endpoints return a `X-Request-Id` header for request tracing.
+
+## Roadmap
+- [ ] Unified `/v1/chat` endpoint
+- [ ] Better manage api_key
+- [ ] Add AuthMiddleware for specific endpoint
+- [ ] Multi-provider routing and fallback
+- [ ] Usage and cost tracking
+- [ ] Rate limiting and quotas
+- [ ] Evaluation and observability hooks
+- [ ] Agent orchestration support
