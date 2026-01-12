@@ -1,9 +1,13 @@
-
 import time
+from typing import Any
 import uuid
 from llm_gateway.domain.models import ChatRequest, ChatResponse, TraceInfo, Usage
 from llm_gateway.providers.base import ChatProvider
-
+from llm_gateway.domain.error import (
+    UnauthorizedError,
+    InvalidRequestError,
+    RateLimitedError,
+)
 
 
 class OpenAIProvider(ChatProvider):
@@ -12,7 +16,7 @@ class OpenAIProvider(ChatProvider):
         self.client = client
         self.model_mapping = model_mapping
         self.provider_name = "openai"
-    
+
     async def chat(self, request: ChatRequest) -> ChatResponse:
         startTime = time.perf_counter()
 
@@ -28,13 +32,24 @@ class OpenAIProvider(ChatProvider):
         if request.max_tokens:
             payload["max_tokens"] = request.max_tokens
 
-        response = await self.client.chat.completions.create(**payload)
+        try:
+            response = await self.client.chat.completions.create(**payload)
+        except Exception as e:
+            print("Error from OpenAI:", str(e))
+            message = str(e).lower()
+            if "rate limit" in message:
+                raise RateLimitedError("Rate limit exceeded for OpenAI provider.")
+            elif "unauthorized" in message:
+                raise UnauthorizedError("Invalid API key provided.")
+            else:
+                raise InvalidRequestError(
+                    "Invalid request to OpenAI provider.", e.message
+                )
         choice = response.choices[0]
 
         return ChatResponse(
             id=str(uuid.uuid4()),
             created=int(time.time()),
-
             model=request.model,
             output_text=choice.message.content,
             finish_reason=choice.finish_reason,
@@ -43,16 +58,15 @@ class OpenAIProvider(ChatProvider):
                 completion_tokens=response.usage.completion_tokens,
                 total_tokens=response.usage.total_tokens,
             ),
-
             trace=TraceInfo(
-                request_id="from-middleware",
+                request_id="from middleware",
                 provider=self.provider_name,
                 model=request.model,
                 latency_ms=int((time.perf_counter() - startTime) * 1000),
-                details=None
+                details=None,
             ),
-            cost=None
+            cost=None,
         )
-    
+
     def resolve_model(self, requested_model: str) -> str:
         return self.model_mapping.get(requested_model, requested_model)

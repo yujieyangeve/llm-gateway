@@ -6,6 +6,11 @@ from .middleware.request_id import RequestIDMiddleware
 from .routing.router import health_router
 from contextlib import asynccontextmanager
 from openai import AsyncOpenAI
+from .domain.error import GatewayError
+from .middleware.exception_handler import (
+    gate_way_exception_handler,
+    unknown_exception_handler,
+)
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
@@ -37,9 +42,9 @@ def _register_middlewares(app: FastAPI, settings: Settings):
     # app.add_middleware(ApiKeyAuthMiddleware, settings=settings)
 
 
-# def _register_exception_handlers(app: FastAPI):
-#     print("Registering exception handlers...")
-#     app.add_exception_handler(Exception, generic_exception_handler)
+def _register_exception_handlers(app):
+    app.add_exception_handler(GatewayError, gate_way_exception_handler)
+    app.add_exception_handler(Exception, unknown_exception_handler)
 
 
 def create_app(settings: Settings):
@@ -49,7 +54,7 @@ def create_app(settings: Settings):
 
     _register_middlewares(app, settings)
     _register_routes(app)
-    # _register_exception_handlers(app)
+    _register_exception_handlers(app)
     return app
 
 
